@@ -4,7 +4,7 @@
   padding: 2.5rem;
 }
 
-.post+.post {
+.post + .post {
   margin-top: 2rem;
 }
 
@@ -14,7 +14,7 @@
   margin-top: 1.5rem;
 }
 
-.content>p {
+.content > p {
   margin-top: 1rem;
 }
 
@@ -28,13 +28,13 @@
   color: var(--green-300);
 }
 
-.post>header {
+.post > header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.post>header time {
+.post > header time {
   font-size: 0.875rem;
   color: var(--gray-400);
 }
@@ -43,15 +43,6 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-}
-
-.author>img {
-  box-sizing: initial;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 8px;
-  border: 4px solid var(--gray-800);
-  outline: 2px solid var(--green-500);
 }
 
 .authorInfo {
@@ -79,7 +70,7 @@
   border-top: 1px solid var(--gray-600);
 }
 
-.commentForm>strong {
+.commentForm > strong {
   line-height: 1.6;
   color: var(--gray-100);
 }
@@ -97,7 +88,7 @@
   margin-top: 1rem;
 }
 
-.commentForm button[type=submit] {
+.commentForm button[type="submit"] {
   padding: 1rem 1.5rem;
   margin-top: 1rem;
   border-radius: 8px;
@@ -118,7 +109,7 @@
   max-height: none;
 }
 
-.commentForm button[type=submit]:hover {
+.commentForm button[type="submit"]:hover {
   background: var(--green-300);
 }
 
