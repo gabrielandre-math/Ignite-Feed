@@ -1,54 +1,124 @@
 import styles from "./Post.module.css";
 import { Comment } from "./Comment";
 import { Avatar } from "./Avatar";
-export const Post = () => {
+import { format, formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale/pt-BR";
+import { useState } from "react";
+interface PostContent {
+  type: "paragraph" | "link";
+  content: string;
+}
+interface Author {
+  avatarUrl: string;
+  name: string;
+  role: string;
+}
+interface Post {
+  author: Author;
+  content: PostContent[];
+  publishedAt: Date;
+}
+export const Post: React.FC<Post> = ({ author, content, publishedAt }) => {
+  const [comments, setComments] = useState<string[]>([
+    "Post muito bacana, né?",
+  ]);
+
+  const publishedDateFormatted = format(
+    publishedAt,
+    "d 'de' LLLL 'às' HH:mm'h'",
+    {
+      locale: ptBR,
+    }
+  );
+  const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+    locale: ptBR,
+    addSuffix: true,
+  });
+  function handleCreateNewComment(e: React.FormEvent) {
+    e.preventDefault();
+
+    // Joga o texto do estado "newCommentText" para o array de "comments"
+    setComments([...comments, newCommentText]);
+
+    // Limpa o campo
+    setNewCommentText("");
+  }
+  function deleteComment(commentToDelete: string) {
+    const commentsWithoutDeletedOne = comments.filter(
+      (comment) => comment !== commentToDelete
+    );
+    setComments(commentsWithoutDeletedOne);
+  }
+
+  const [newCommentText, setNewCommentText] = useState("");
+
+  function handleNewCommentChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setNewCommentText(e.target.value);
+    event?.target.setCustomValidity("");
+  }
+
+  function handleNewCommentInvalid(): void {
+    event?.target.setCustomValidity("Esse campo é obrigatório!");
+  }
+  const isNewCommentEmpty = newCommentText.length == 0;
   return (
     <article className={styles.post}>
       <header>
         <div className={styles.author}>
-          <Avatar
-            hasBorder={true}
-            url="https://avatars.githubusercontent.com/u/60861872?v=4"
-          />
+          <Avatar hasBorder={true} url={author.avatarUrl} />
 
           <div className={styles.authorInfo}>
-            Gabriel André
-            <span>Web Developer</span>
+            {author.name}
+            <span>{author.role}</span>
           </div>
         </div>
 
-        <time title="14 de fevereiro às 02:29" dateTime="2025-02-14 02:29:00">
-          Publicado há 1h
+        <time title={publishedDateFormatted} dateTime={publishedDateFormatted}>
+          {publishedDateRelativeToNow}
         </time>
       </header>
 
       <div className={styles.content}>
-        <p>
-          Fala pessoal! Hoje gostaria de comemorar que estou entendendo React e
-          tô
-        </p>
-        <p>curtindo muito! </p>{" "}
-        <a className={styles.link} href="#">
-          #feliz
-        </a>{" "}
-        <a className={styles.link} href="#">
-          #React
-        </a>{" "}
-        <a className={styles.link} href="#">
-          #JS
-        </a>
+        {content.map((line) => {
+          if (line.type === "paragraph") {
+            return <p key={line.content}>{line.content}</p>;
+          } else if (line.type === "link") {
+            return (
+              <a key={line.content} className={styles.link} href="#">
+                {line.content}
+              </a>
+            );
+          }
+          return null;
+        })}
       </div>
-      <form className={styles.commentForm}>
+
+      <form onSubmit={handleCreateNewComment} className={styles.commentForm}>
         <strong>Deixe seu feedback</strong>
-        <textarea placeholder="Deixe um comentário" />
+        <textarea
+          placeholder="Deixe um comentário"
+          value={newCommentText}
+          onChange={handleNewCommentChange}
+          onInvalid={handleNewCommentInvalid}
+          required
+        />
+
         <footer>
-          <button type="submit">Publicar</button>
+          <button disabled={isNewCommentEmpty} type="submit">
+            Publicar
+          </button>
         </footer>
       </form>
       <div className={styles.commentList}>
-        <Comment />
-        <Comment />
-        <Comment />
+        {comments.map((comment) => {
+          return (
+            <Comment
+              key={comment}
+              content={comment}
+              onDeleteComment={deleteComment}
+            />
+          );
+        })}
       </div>
     </article>
   );
